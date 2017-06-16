@@ -1,4 +1,4 @@
-package funcprog.chapter2
+package funcprog.ch2
 // A comment!
 /* Another comment */
 /** A documentation comment */
