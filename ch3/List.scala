@@ -207,8 +207,156 @@ object List {
   def appendFold[A](l: List[A], r: List[A]) List[A] = foldRight(l, r)(Cons(_,_))
 
   // fn that concats a list of lists into a single list. O(n) time.
-  def concatLists(ls: List[List[A]], n:List[A]=Nil): List[A] =
+  def concat[A](ls: List[List[A]], n:List[A]=Nil): List[A] =
     foldRight(ls, n)((h : List[A], t: List[A]) => append(h,t))
+
+    /* More list functions:
+     *   - Generalize any explicit recursive functions written while
+     *     processing ists
+     *   - and will rediscover these funcions, developing an instinct
+     *     for when to use
+     */
+
+  // transform list of ints by adding 1 to each element
+  def addOne(l: List[Int]): List[Int] = // walk through with Cons and
+                                        // just add one to each head
+                                        // as we pass, and then Cons
+                                        // and keep going
+    foldRight(l, Nil: List[Int])((h,t) => Cons(h+1, t))
+  // Smart way to do it.
+
+
+  // 3.17 - write fn that turns each value in a List[Double] to String.
+  //   use d.toString to perform conversion
+  def doubleList2String(l: List[Double]): List[String] =
+    foldRight(l, Nil: List[Int])((h,t) => Cons(h.toString, t))
+
+  // 3.18 - Generalize these functions, with map
+  def map[A,B](as: List[A])(f: A => B): List[B] =
+    foldRight(l, Nil: List[Int])((h,t) => Cons(f(h), t)) // simple but not stack safe
+
+
+  def map_2[A,B](l: List[A])(f: A => B): List[B] = {
+    val buf = new collection.mutable.ListBuffer[B]
+    // use an inner function that only sees one item at a time
+    // to keep it stack safe
+    def go(l: List[A]): Unit = l match {
+      case Nil => ()
+      case Cons(h,t) => buf += f(h); go(t) // add current head to buffer,
+                                           // outside inner fn scope
+                                           // and keep recursing
+    }
+    go(l)
+    List(buf.toList: _*)// convert to our list type from ListBuffer
+  }
+
+  // 3.19 - Write a function filter that removes elements from a list unless they satisfy a given
+  // predicate. Use it to remove all odd numbers from a List[Int].
+  def filter[A](as: List[A])(f: A => Boolean): List[A] = as match {
+    case Nil => Nil
+    case Cons(h,t) if f(h) => Cons(h, filter(t)(f))
+    case Cons(_,t) => filter(t)(f)
+  }
+  // keep only evens
+  // filter(as)((x: Int) => x % 2 == 0)
+
+  // or, with a foldRight
+  def filterFold[A](l: List[A])(f: A => Boolean): List[A] =
+    foldRight(l, Nil:List[A])((h,t) => if (f(h)) Cons(h,t) else t) // nice one liner
+
+  // and with stack safety
+  def filter_2[A](l: List[A])(f: A => Boolean): List[A] = {
+    val buf = new collection.mutable.ListBuffer[A] // mutable value
+    def go(l: List[A]): Unit = l match {
+      case Nil => ()
+      case Cons(h, t) => if (f(h)) buf += h; go(t) // add to external buf & recurse
+    }
+    go(l)
+    List(buf.toList: _*)
+  }
+
+  // 3.20 - FlatMap
+  // same as map, but use concat to combine, since we are combining lists now
+  def flatMap_1[A,B](as: List[A])(f: A => List[B]): List[B] = {
+    val buf = new collection.mutable.ListBuffer[A]
+    def go(l: List[A]): Unit = l match {
+      case Nil => ()
+      case Cons(h,t) => concat(buf, f(h)); go(t) // use concat because
+                                                 // it combines 2 lists
+
+    }
+    go(l)
+    List(buf.toList: _*)
+  }
+
+  def flatMap[A,B](as: List[A])(f: A => List[B]): List[B] =
+    concat(map(l)(f))
+
+  // 3.21 - Use flatMap to implement filter
+  def filterFlatMap[A](l: List[A])(f: A => Boolean): List[A] =
+    flatMap(l)(a => if (f(a)) List(a) else Nil) // basically need to convert
+                                                // each item to a list
+                                                // so that flatMap works
+
+  // 3.22 - Add lists pairwise
+  def addLists[A](l: List[A], r: List[A]): List[A] = {
+    val buf = new collection.mutable.ListBuffer[A]
+    def go(l: List[A], r: List[B]): Unit = (l, r) match {
+      case (Nil, _) => ()
+      case (_, Nil) => ()
+      case (Cons(x, xs), Cons(y, ys)) => Cons(x + y, go(xs, ys))
+    }
+    go(l)
+    List(buf.toList: _*)
+  }
+
+  // 3.23 - ZipWith
+  // stack-safe
+  def zipWith[A,B,C](l: List[A], r: List[B])(f: (A,B) => C): List[C] => {
+    val buf = new collection.mutable.ListBuffer[A]
+    def go(l: List[A], r: List[B]): Unit = (l, r) match {
+      case (Nil, _) => ()
+      case (_, Nil) => ()
+      case (Cons(x, xs), Cons(y, ys)) => Cons(f(x,y), go(xs, ys))
+  }
+    go(l)
+    List(buf.toList: _*)
+  }
+
+  // simpler
+  def zipWith_1[A,B,C](a: List[A], b: List[B])(f: (A,B) => C): List[C] =
+    (a,b) match {
+      case (Nil,_) => Nil
+      case (_,Nil) => Nil
+      case (Cons(x, xs), Cons(y, ys)) => Cons(f(x,y), zipWith_1(xs, ys))
+    }
+
+  // 3.24 -  Subsequences -- monolithic approach
+  //   * better to use combinatoins of other small functions
+  //   * makes code easier to reason about
+  @annotation.tailrec
+  def startsWith[A](l: List[A], prefix: List[A]): Boolean =
+    (l,prefix) match {
+      case (_,Nil) => true // if prefix is Nil --> base case. happens when run out of prefix
+      case (Cons(h,t),Cons(h2,t2)) if h == h2 => startsWith(t,t2) // check item by item
+      // and keep recursing until we run out of t2
+      case _ => false // any other case is false
+    }
+
+  @annotation.tailrec
+  def hasSubsequence[A](sup: List[A], sub: List[A]): Boolean =
+  sup match {
+    case Nil => sub == Nil  // if we hit a Nil in the target string
+                            // then also need to check if the sub is Nil at same point
+                            // if so --> they are ==
+    case _ if startsWith(sup, sub) => true  // any other case,
+                                            // first, play out startsWith to end
+                                            // and if it returns true --> we are true
+    case Cons(_,t) => hasSubsequence(t, sub)  // otherwise, drop head of list
+                                              // and keep going
+  } // this makes it sort of like a for-loop, calling fn's at each step
+    // interesting approach
+
 
 
 }

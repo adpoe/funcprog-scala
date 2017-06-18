@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="18ab70d8-1347-42ca-8025-9602eb0045c5" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/ch3/Tree.scala" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/ch4/ch4.scala" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ch3/List.scala" afterPath="$PROJECT_DIR$/ch3/List.scala" />
     </list>
@@ -46,12 +48,34 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="List.scala" pinned="false" current-in-tab="true">
+      <file leaf-file-name="List.scala" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ch3/List.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="280">
-              <caret line="211" column="0" selection-start-line="211" selection-start-column="0" selection-end-line="211" selection-end-column="0" />
+            <state relative-caret-position="265">
+              <caret line="349" column="64" selection-start-line="349" selection-start-column="64" selection-end-line="349" selection-end-column="64" />
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Tree.scala" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/ch3/Tree.scala">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="70">
+              <caret line="59" column="34" selection-start-line="59" selection-start-column="34" selection-end-line="59" selection-end-column="34" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ch4.scala" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/ch4/ch4.scala">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="345">
+              <caret line="76" column="1" selection-start-line="76" selection-start-column="1" selection-end-line="76" selection-end-column="1" />
+              <folding>
+                <element signature="n#failingFn#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -80,6 +104,8 @@
         <option value="$PROJECT_DIR$/ch2/MyModule.scala" />
         <option value="$PROJECT_DIR$/ch3/ch3.scala" />
         <option value="$PROJECT_DIR$/ch3/List.scala" />
+        <option value="$PROJECT_DIR$/ch3/Tree.scala" />
+        <option value="$PROJECT_DIR$/ch4/ch4.scala" />
       </list>
     </option>
   </component>
@@ -96,7 +122,7 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="591" />
+    <option name="x" value="616" />
     <option name="y" value="23" />
     <option name="width" value="1246" />
     <option name="height" value="751" />
@@ -704,15 +730,15 @@
       <updated>1497403292590</updated>
       <workItem from="1497403295488" duration="308000" />
       <workItem from="1497411874437" duration="1355000" />
-      <workItem from="1497417236662" duration="30879000" />
+      <workItem from="1497417236662" duration="54229000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="32542000" />
+    <option name="totallyTimeSpent" value="55892000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="591" y="23" width="1246" height="751" extended-state="0" />
+    <frame x="616" y="23" width="1246" height="751" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -809,9 +835,27 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ch3/List.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="280">
-          <caret line="211" column="0" selection-start-line="211" selection-start-column="0" selection-end-line="211" selection-end-column="0" />
+        <state relative-caret-position="265">
+          <caret line="349" column="64" selection-start-line="349" selection-start-column="64" selection-end-line="349" selection-end-column="64" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ch3/Tree.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="70">
+          <caret line="59" column="34" selection-start-line="59" selection-start-column="34" selection-end-line="59" selection-end-column="34" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ch4/ch4.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="345">
+          <caret line="76" column="1" selection-start-line="76" selection-start-column="1" selection-end-line="76" selection-end-column="1" />
+          <folding>
+            <element signature="n#failingFn#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
