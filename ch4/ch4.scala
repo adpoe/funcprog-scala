@@ -345,7 +345,7 @@ def traverse_1[E,A,B](es: List[A])(f: A => Either[E, B]): Either[E, List[B]] =
   es.foldRight[Either[E,List[B]]](Right(Nil))((a, b) => f(a).map2(b)(_ :: _))
 
 /** Use Either to validate data */
-case class Person(name: Name, age: Age)
+case class Person(name: Name, age: Age)u
 sealed class Name(val value: String)
 sealed class Age(val value: Int)
 
