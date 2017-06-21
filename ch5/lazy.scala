@@ -80,3 +80,51 @@ object Stream {
 }
 
 
+/* 5.3 - Separating Program Description from Evaluation */
+def exists(p: A => Boolean): Boolean = this match {
+  case Cons(h,t) => p(h()) || t.exists(p)
+  case _ => false
+}
+
+// lazy foldright
+def foldRight[B](z: => B)(f: (A, => B) => B): B =
+  this match {
+    case Cons(h,t) => f(h(), t().foldRight(z)(f))
+    case _ => z
+  }
+
+// exists via foldright
+def exists(p: A => Boolean): Boolean =
+  foldRight(false)((a,b) => p(a) || b) // b is unevaluated recursive step that
+                                       // folds the tail of the stream
+                                       // if f chooses not to evaluate its
+                                       // 2nd param, traversal terminates early
+
+// Ex 5.4 - forAll ... terminate as soon as encounter non-matching value
+def forAll(p: A => Boolean): Boolean =
+  foldRight(true)((a,b) => p(a) && b) // terminate as soon as a p(a) is false
+
+// Ex 5.5 -takeWhile via foldirght
+def takeWhile(f: A => Boolean): Stream[A] =
+  foldRight(empty[A])((h,t) =>
+    if (f(h)) cons(h,t)
+    else      empty)
+
+// Ex 5.6 -  Implement headOption using foldright
+def headOption: Option[A] =
+  foldRight(None: Option[A])((h,_) => Some(h))
+
+// Ex 5.7 - map, filter, append, and flatMap using foldRight
+def map[B](f: A => B): Stream[B] =
+  foldRight(empty[B])((h,t) => cons(f(h), t))
+
+def filter(f: A => Boolean): Stream[A] =
+  foldRight(empty[A])((h,t) =>
+    if (f(h)) cons(h,t)
+    else t)
+
+def append[B>:A](s: => Stream[B]): Stream[B] =
+  foldRight(s)((h,t) => cons(h,t))
+
+def flatMap[B](f: A => Stream[B]): Stream[B] =
+  foldRight(empty[B])((h,t) => f(h) append t)
