@@ -128,3 +128,61 @@ def append[B>:A](s: => Stream[B]): Stream[B] =
 
 def flatMap[B](f: A => Stream[B]): Stream[B] =
   foldRight(empty[B])((h,t) => f(h) append t)
+
+
+/**
+  * 5.4 - Infinite streams and corecursion
+  */
+val ones: Stream[Int] = Stream.cons(1, ones)
+// 5.8 - generalize ones to the fn 'constant' which returns
+//   an infinite recursive stream of a give value
+def constant[A](a: A): Stream[A] =
+  Stream.cons(a, constant(a))
+
+// more efficient version
+// bc it's just one object referencing itself
+def constant[A](a: A): Stream[A] = {
+  lazy val tail: Stream[A] = Cons(() => a, () => tail)
+  tail
+}
+
+// 5.9 - fn to gen an infnite stream of ints
+//    n + 1, n + 2
+def from(n: Int): Stream[Int] =
+  Stream.cons(n, from(n+1))
+
+// 5.10 - write a fn, fibs, that generates an infinite
+// stream of fib numbers, 0,1,1,2,3,5,8, etc..
+val fibs = {
+  def go(f0: Int, f1: Int): Stream[Int] =
+    cons(f0, go(f1, f0+f1)) // next value is f0 + f1
+  go(0,1)
+}
+
+// 5.11 - write a more general stream-building fn
+// called unfold. takes an initial sate, and a fn
+// for producing both the next state, and the next value
+// in the generated stream
+def unfold[A,S](z: S)(f: S => Option[(A,S)]): Stream[A] =
+  f(z) match { // run a fucntion, and if evals to a Some, keep going
+    case Some((h,s)) => cons(h, unfold(s)(f))
+    case None => empty
+  } // a corecusrve function. produces data.
+    // fn is productive, as long as f terminates
+    // always only need to run fn *one* more time
+    // to get next result in the stream
+    // -- also called guarded recursion
+
+// 5.12 - write fibs, constant, and ones, in terms of unfold
+val fibsViaUnfold =
+  unfold((0,1)) { case (f0, f1) => Some((f0, (f1,f0+f1)))}
+
+def fromViaUnfold(n: Int) =
+  unfold(n)(n => Some((n,n+1)))
+
+def constantViaUnfold[A](a: A) =
+  unfold(a)(_ => Some((a,a))) // always same
+
+def onesViaUnfold = unfold(1)(_ => Some((1,1)))
+
+
