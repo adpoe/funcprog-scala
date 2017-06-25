@@ -167,7 +167,7 @@ def unfold[A,S](z: S)(f: S => Option[(A,S)]): Stream[A] =
   f(z) match { // run a fucntion, and if evals to a Some, keep going
     case Some((h,s)) => cons(h, unfold(s)(f))
     case None => empty
-  } // a corecusrve function. produces data.
+  } // a corecursive function. produces data.
     // fn is productive, as long as f terminates
     // always only need to run fn *one* more time
     // to get next result in the stream
@@ -186,3 +186,49 @@ def constantViaUnfold[A](a: A) =
 def onesViaUnfold = unfold(1)(_ => Some((1,1)))
 
 
+// 5.13 - use unfold to implement map, take, takeWhile, zipWith
+// and zipAll
+def mapViaUnfold[B](f: A => B): Stream[B] =
+  unfold(this) {  // this is a whole function that gets passed in
+                  // to unfold
+    case Cons(h,t) => Some(f(h(), t()))
+    case _ => None
+  }
+
+def takeViaUnfold(n: Int): Stream[A] =
+  unfold((this, n)) {
+    case (Cons(h,t), 1) => Some((h(), (empty, 0)))
+    case (Cons(h,t), n) if n > 1 => Some((h(), (t(), n-1)))
+    case _ => None
+  }
+
+def takeWhileViaUnfold(f: A => Boolean): Stream[A] =
+  unfold(this) {
+    case Cons(h,t) if f(h()) => Some((h(), t())) // return tuples
+    case _ = None
+  }
+
+def zipWith[B,C](s2: Stream[B])(f: (A,B) => C): Stream[C] =
+  unfold((this, s2)) {
+    case (Cons(h1,t1), Cons(h2,t2)) =>
+      Some((f(h1(), h2()), (t1(), t2()))) // pull hs together and put tails back on stream
+    case _ => None
+  }
+
+def zipAll[B](s2: Stream[B]): Stream[(Option[A],Option[B])] =
+  zipWithAll(s2)((_,_))
+
+def zipWithAll[B, C](s2: Stream[B])(f: (Option[A], Option[B]) => C): Stream[C] =
+  Stream.unfold((this, s2)) {
+    case (Empty, Empty) => None
+    case (Cons(h, t), Empty) => Some(f(Some(h()), Option.empty[B]) -> (t(), empty[B]))
+    case (Empty, Cons(h, t)) => Some(f(Option.empty[A], Some(h())) -> (empty[A] -> t()))
+    case (Cons(h1, t1), Cons(h2, t2)) => Some(f(Some(h1()), Some(h2())) -> (t1() -> t2()))
+  }
+
+// 5.15 - implement tails
+def tails: Stream[Stream[A]] =
+  unfold(this) {
+    case Empty => None
+    case s => Some((s, s drop 1))
+  } append Stream(empty)
